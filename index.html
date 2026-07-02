@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Questions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --card:#FFFFFF;
+    --ink:#1C1A17;
+    --ink-soft:#5A544A;
+    --gold:#A9772E;
+    --gold-tint:#EFE4CE;
+    --line:#E3DBCB;
+    --shadow:0 1px 2px rgba(28,26,23,.06),0 8px 24px rgba(28,26,23,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+  }
+ 
+  /* Header */
+  header{
+    padding:22px 20px 16px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  h1{
+    font-family:'Josefin Sans',sans-serif;
+    font-weight:300;
+    font-size:27px;
+    letter-spacing:.01em;
+    margin:0;
+    line-height:1.1;
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:6px 0 0;
+    max-width:38ch;
+  }
+  /* Language toggle */
+  .lang{
+    display:inline-flex;
+    border:1px solid var(--line);
+    border-radius:999px;
+    overflow:hidden;
+    background:var(--card);
+    flex:none;
+  }
+  .lang button{
+    border:0;background:transparent;
+    font-family:inherit;font-size:13px;font-weight:600;
+    padding:7px 14px;cursor:pointer;color:var(--ink-soft);
+  }
+  .lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .lang button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+ 
+  /* Thread */
+  .thread{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .msg{max-width:82%;padding:12px 15px;border-radius:16px;font-size:15px}
+  .msg.bot{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-bottom-left-radius:5px;
+    align-self:flex-start;
+    box-shadow:var(--shadow);
+  }
+  .msg.user{
+    background:var(--gold-tint);
+    color:var(--ink);
+    border-bottom-right-radius:5px;
+    align-self:flex-end;
+  }
+  .msg.bot strong{color:var(--ink)}
+  .msg a{color:var(--gold);font-weight:600}
+ 
+  /* Suggestion chips */
+  .chips-label{
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;margin:2px 4px;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 4px}
+  .chip{
+    font-family:inherit;font-size:13.5px;
+    background:var(--card);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:9px 14px;border-radius:999px;cursor:pointer;
+    transition:border-color .15s,transform .05s;
+    text-align:left;
+  }
+  .chip:hover{border-color:var(--gold)}
+  .chip:active{transform:translateY(1px)}
+  .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+ 
+  /* Composer */
+  .composer{
+    border-top:1px solid var(--line);
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom,0));
+    display:flex;gap:10px;background:var(--paper);
+  }
+  .composer input{
+    flex:1;font-family:inherit;font-size:15px;
+    padding:12px 15px;border-radius:999px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink);
+  }
+  .composer input:focus{outline:2px solid var(--gold);outline-offset:0;border-color:transparent}
+  .composer button{
+    flex:none;border:0;background:var(--ink);color:#fff;
+    font-family:inherit;font-weight:600;font-size:15px;
+    padding:0 20px;border-radius:999px;cursor:pointer;
+  }
+  .composer button:active{transform:translateY(1px)}
+  .composer button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+ 
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:420px){h1{font-size:24px}.msg{max-width:88%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow" id="eyebrow"></p>
+      <h1 id="title"></h1>
+      <p class="sub" id="subtitle"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="btn-en" aria-pressed="true" onclick="setLang('en')">EN</button>
+      <button id="btn-es" aria-pressed="false" onclick="setLang('es')">ES</button>
+    </div>
+  </header>
+ 
+  <div class="thread" id="thread" aria-live="polite"></div>
+ 
+  <div class="composer">
+    <input id="input" type="text" autocomplete="off" enterkeyhint="send">
+    <button id="send" onclick="handleSend()"></button>
+  </div>
+</div>
+ 
+<script>
+/* ============================================================
+   EDIT HERE — this is the only part you change.
+   Change ONLY the words between the "quotes". Leave the
+   quotes, commas, colons, and { } braces alone.
+   en = English, es = Spanish (keep them saying the same thing).
+   Anything in [brackets] is still a placeholder for you to fill.
+   <strong>...</strong> makes text bold.
+   ============================================================ */
+const FAQS = [
+  {
+    id:"grades",
+    q:{en:"How does grading work in this class?",
+       es:"¿Cómo funcionan las calificaciones en esta clase?"},
+    a:{en:"This class doesn't average points into a percentage. Your child's grade is based on <strong>proficiency in learning targets</strong> — the specific skills of each unit. Each target is scored 0–4 (4 = mastery, 3 = proficient, 2 = approaching, 1 = beginning, 0 = no evidence yet). The final grade reflects your child's <strong>most consistent and recent</strong> work, so it rewards growth over time rather than a rough first attempt, and students get multiple chances to show they've improved. You can see the learning-target scores in <strong>[Aeries Parent Portal — add your link]</strong>, usually updated within a week of an assignment being turned in. Need a portal login? Email Ms. Robinson and she'll help.",
+       es:"Esta clase no promedia puntos en un porcentaje. La calificación de su hijo/a se basa en el <strong>dominio de los objetivos de aprendizaje</strong> — las habilidades específicas de cada unidad. Cada objetivo se califica de 0 a 4 (4 = dominio, 3 = competente, 2 = en proceso, 1 = inicial, 0 = sin evidencia). La calificación final refleja el trabajo <strong>más constante y reciente</strong>, así que premia el crecimiento con el tiempo, no un primer intento, y los estudiantes tienen varias oportunidades para demostrar su progreso. Puede ver las puntuaciones en <strong>[Portal de Padres de Aeries — agregue su enlace]</strong>, normalmente actualizadas dentro de una semana. ¿No tiene acceso al portal? Escriba a Ms. Robinson y le ayudará."},
+    keywords:["grade","grades","grading","gradebook","proficiency","learning target","target","score","scores","points","average","percent","percentage","mark","report card","aeries","portal","calificacion","calificaciones","notas","boleta","promedio","puntos","dominio","objetivo","objetivos","porcentaje","ver","revisar"]
+  },
+  {
+    id:"latework",
+    q:{en:"What is the late or missing work policy?",
+       es:"¿Cuál es la política de trabajo tarde o faltante?"},
+    a:{en:"Make-up work is only accepted when an absence is <strong>excused and verified in Aeries</strong>. Unexcused late work isn't accepted. Separately, because grading is proficiency-based, students do get <strong>multiple opportunities</strong> to show growth on each learning target — so if your child has fallen behind on a skill, encourage them to talk to Ms. Robinson about their next attempt.",
+       es:"Solo se acepta trabajo de recuperación cuando la ausencia está <strong>justificada y verificada en Aeries</strong>. El trabajo tarde sin justificación no se acepta. Por otro lado, como la calificación se basa en el dominio, los estudiantes sí tienen <strong>varias oportunidades</strong> para demostrar crecimiento en cada objetivo de aprendizaje — así que si su hijo/a se atrasó en una habilidad, anímelo a hablar con Ms. Robinson sobre su próximo intento."},
+    keywords:["late","missing","make up","makeup","turn in","turnin","deadline","due","excused","unexcused","absence","aeries","redo","resubmit","tarde","faltante","entregar","recuperar","recuperacion","fecha","justificada","rehacer"]
+  },
+  {
+    id:"absence",
+    q:{en:"My child was absent — what do they do?",
+       es:"Mi hijo/a faltó — ¿qué debe hacer?"},
+    a:{en:"For an absence to count as excused, it must be <strong>verified in Aeries</strong> through the main office — make-up work is only accepted for excused absences. When your child returns, have them check what they missed and see Ms. Robinson about any learning targets to make up. Note on tardies: arriving more than <strong>30 minutes</strong> late requires a check-in from the main office or a signed note from a teacher, and a signed administrator pass will excuse a tardy.",
+       es:"Para que una ausencia sea justificada, debe estar <strong>verificada en Aeries</strong> a través de la oficina principal — el trabajo de recuperación solo se acepta con ausencias justificadas. Cuando su hijo/a regrese, debe revisar lo que faltó y hablar con Ms. Robinson sobre los objetivos que necesita recuperar. Sobre las tardanzas: llegar más de <strong>30 minutos</strong> tarde requiere un registro en la oficina principal o una nota firmada por un maestro, y un pase firmado por un administrador justifica la tardanza."},
+    keywords:["absent","absence","sick","missed","out","excused","aeries","tardy","tardies","late arrival","verify","ausente","ausencia","enfermo","falto","faltar","justificar","tardanza","tardanzas","recuperar"]
+  },
+  {
+    id:"contact",
+    q:{en:"How do I contact Ms. Robinson?",
+       es:"¿Cómo me comunico con Ms. Robinson?"},
+    a:{en:"The best way to reach Ms. Robinson is by email at <strong>mia.robinson@inglewoodusd.com</strong>. Office hours are <strong>by appointment</strong> — email to set up a time to talk.",
+       es:"La mejor forma de contactar a Ms. Robinson es por correo a <strong>mia.robinson@inglewoodusd.com</strong>. El horario de atención es <strong>con cita previa</strong> — escríbale para acordar una hora."},
+    keywords:["contact","email","reach","message","talk","office hours","appointment","meet","get in touch","comunicar","contactar","correo","cita","hablar","mensaje","horario"]
+  },
+  {
+    id:"cellphone",
+    q:{en:"What is the cell phone policy?",
+       es:"¿Cuál es la política de teléfonos celulares?"},
+    a:{en:"Inglewood Unified now has a districtwide cell phone policy: students lock their phones in a <strong>Yondr pouch</strong> during the school day. Phones stay locked away and out of use until dismissal.",
+       es:"Inglewood Unified ahora tiene una política de teléfonos celulares para todo el distrito: los estudiantes guardan sus teléfonos en una <strong>bolsa Yondr</strong> durante el día escolar. Los teléfonos permanecen guardados y sin usarse hasta la salida."},
+    keywords:["phone","phones","cell","cellphone","cellphones","mobile","yondr","pouch","texting","device rules","telefono","telefonos","celular","celulares","movil","bolsa"]
+  },
+  {
+    id:"materials",
+    q:{en:"What supplies or materials are needed?",
+       es:"¿Qué útiles o materiales se necesitan?"},
+    a:{en:"Your child needs <strong>notebooks, pens, and pencils</strong> for notes, drafting, and planning, plus access to a <strong>Chromebook or Apple computer</strong> for research and presentations. Most readings are online or through <strong>StudySync</strong>. If getting any of this is a hardship, please email Ms. Robinson privately and she'll help you find options.",
+       es:"Su hijo/a necesita <strong>cuadernos, plumas y lápices</strong> para tomar notas, redactar y planear, además de acceso a un <strong>Chromebook o computadora Apple</strong> para investigar y hacer presentaciones. La mayoría de las lecturas están en línea o en <strong>StudySync</strong>. Si conseguir algo de esto es difícil, escriba en privado a Ms. Robinson y le ayudará a encontrar opciones."},
+    keywords:["materials","supplies","need","needed","bring","notebook","notebooks","pen","pens","pencil","pencils","chromebook","computer","laptop","studysync","device","utiles","materiales","cuaderno","pluma","lapiz","computadora","necesita","traer"]
+  },
+  {
+    id:"class",
+    q:{en:"What does this class cover?",
+       es:"¿Qué cubre esta clase?"},
+    a:{en:"This is Innovator's Forum 9 — English 9. Instead of a traditional lecture-and-essay class, students tackle <strong>real-world problems</strong> through reading, research, writing, and projects, and write for social change. The first unit is <strong>Health and Wellness</strong> (poetry, personal narratives, and nonfiction about social issues and personal growth). In later units, students research a problem they've identified, design a solution, and present it to a real audience.",
+       es:"Esta es Innovator's Forum 9 — Inglés 9. En lugar de una clase tradicional de conferencias y ensayos, los estudiantes abordan <strong>problemas del mundo real</strong> mediante lectura, investigación, escritura y proyectos, y escriben para el cambio social. La primera unidad es <strong>Salud y Bienestar</strong> (poesía, narrativas personales y textos de no ficción sobre temas sociales y crecimiento personal). En las unidades siguientes, los estudiantes investigan un problema, diseñan una solución y la presentan a un público real."},
+    keywords:["class","about","cover","covers","subject","learn","learning","curriculum","unit","units","project","projects","english","innovator","forum","health","wellness","clase","materia","aprender","unidad","proyecto","tema","cubre","ingles","salud"]
+  },
+  {
+    id:"mastery",
+    q:{en:"What is mastery / standards-based grading?",
+       es:"¿Qué es la calificación por dominio o basada en estándares?"},
+    a:{en:"It's a different way of grading than most of us grew up with. Instead of averaging every assignment into one percentage, it measures <strong>how well your child has learned each specific skill</strong> (called a learning target). A student who struggles at first but masters the skill by the end isn't dragged down by those early attempts — the grade reflects <strong>where they end up, not their rough start</strong>. The goal is to show what your child actually knows and can do, and to reward growth. So a lower score early in a unit isn't a permanent dent; it's a snapshot of a skill still in progress.",
+       es:"Es una forma de calificar distinta a la que muchos conocimos. En lugar de promediar cada tarea en un solo porcentaje, mide <strong>qué tan bien ha aprendido su hijo/a cada habilidad específica</strong> (llamada objetivo de aprendizaje). Un estudiante que al principio batalla pero domina la habilidad al final no se ve perjudicado por esos primeros intentos — la calificación refleja <strong>dónde termina, no su comienzo difícil</strong>. La meta es mostrar lo que su hijo/a realmente sabe y puede hacer, y premiar el crecimiento. Así que una puntuación baja al inicio de una unidad no es un daño permanente; es una foto de una habilidad todavía en progreso."},
+    keywords:["mastery","standards","standard based","standards based","proficiency based","what is","why","percentage","points","different","competency","dominio","estandares","estandar","basada","competencias","que es","porque","porcentaje","diferente"]
+  },
+  {
+    id:"help",
+    q:{en:"How can I help my child at home?",
+       es:"¿Cómo puedo ayudar a mi hijo/a en casa?"},
+    a:{en:"The most useful thing: ask your child to walk you through their <strong>learning-target scores</strong> and show you a recent piece of work. Because the grade rewards growth, steady practice and turning in improved attempts matter more than any single assignment. And reaching out to Ms. Robinson early when something's off makes a real difference.",
+       es:"Lo más útil: pida a su hijo/a que le explique sus <strong>puntuaciones por objetivo de aprendizaje</strong> y le muestre un trabajo reciente. Como la calificación premia el crecimiento, la práctica constante y entregar intentos mejorados importan más que cualquier tarea individual. Y avisar a Ms. Robinson temprano cuando algo no va bien hace una gran diferencia."},
+    keywords:["help","home","support","study","practice","parent","involved","at home","ayudar","casa","apoyar","estudiar","practicar","familia","involucrar"]
+  },
+  {
+    id:"tech",
+    q:{en:"My child is having a device or login problem",
+       es:"Mi hijo/a tiene un problema con el dispositivo o inicio de sesión"},
+    a:{en:"For Chromebook or account problems, the school tech desk is the fastest fix — <strong>[add tech contact / location]</strong>. If a device issue is getting in the way of your child's work, let Ms. Robinson know at <strong>mia.robinson@inglewoodusd.com</strong>.",
+       es:"Para problemas con el Chromebook o la cuenta, el soporte técnico de la escuela es lo más rápido — <strong>[agregue contacto / lugar de soporte técnico]</strong>. Si un problema con el dispositivo está estorbando el trabajo de su hijo/a, avise a Ms. Robinson a <strong>mia.robinson@inglewoodusd.com</strong>."},
+    keywords:["device","chromebook","laptop","login","log in","password","tech","technology","broken","account","access","dispositivo","contrasena","acceso","tecnico","computadora","cuenta"]
+  }
+];
+ 
+/* Interface copy. Edit the greeting to sound like you. */
+const UI = {
+  en:{
+    eyebrow:"IYC Inglewood · English 9 · Room E108",
+    title:"Parent Questions",
+    subtitle:"Quick answers about Ms. Robinson's English 9 class. Tap a question or type your own.",
+    intro:"Hi! I'm here to help with common questions about our English 9 class. Tap one below, or type your question and I'll point you to the answer.",
+    chipsLabel:"Common questions",
+    placeholder:"Type your question…",
+    send:"Ask",
+    fallback:"I don't have a saved answer for that one yet. The best next step is to email Ms. Robinson directly at <strong>mia.robinson@inglewoodusd.com</strong>."
+  },
+  es:{
+    eyebrow:"IYC Inglewood · Inglés 9 · Salón E108",
+    title:"Preguntas de Familias",
+    subtitle:"Respuestas rápidas sobre la clase de Inglés 9 de Ms. Robinson. Toque una pregunta o escriba la suya.",
+    intro:"¡Hola! Estoy aquí para ayudar con preguntas comunes sobre nuestra clase de Inglés 9. Toque una abajo, o escriba su pregunta y le indico la respuesta.",
+    chipsLabel:"Preguntas comunes",
+    placeholder:"Escriba su pregunta…",
+    send:"Preguntar",
+    fallback:"Todavía no tengo una respuesta guardada para eso. El mejor paso es escribir directamente a Ms. Robinson a <strong>mia.robinson@inglewoodusd.com</strong>."
+  }
+};
+ 
+/* ============================================================
+   Below is the engine — you don't need to edit this.
+   ============================================================ */
+let lang = "en";
+let messages = [{role:"bot", intro:true}];
+ 
+const strip = s => s.toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .replace(/[^a-z0-9\s]/g," ");
+ 
+function findAnswer(text){
+  const words = strip(text).split(/\s+/).filter(w=>w.length>2);
+  if(!words.length) return null;
+  let best=null, bestScore=0;
+  for(const faq of FAQS){
+    const hay = strip(faq.keywords.join(" ")+" "+faq.q.en+" "+faq.q.es);
+    let score=0;
+    for(const w of words){ if(hay.includes(w)) score++; }
+    if(score>bestScore){ bestScore=score; best=faq; }
+  }
+  return bestScore>=1 ? best : null;
+}
+ 
+function render(){
+  const t = UI[lang];
+  document.getElementById("eyebrow").innerHTML=t.eyebrow;
+  document.getElementById("title").textContent=t.title;
+  document.getElementById("subtitle").textContent=t.subtitle;
+  document.getElementById("input").placeholder=t.placeholder;
+  document.getElementById("send").textContent=t.send;
+  document.documentElement.lang=lang;
+ 
+  const thread=document.getElementById("thread");
+  thread.innerHTML="";
+  for(const m of messages){
+    if(m.role==="user"){
+      thread.appendChild(bubble("user", m.text));
+    } else if(m.intro){
+      thread.appendChild(bubble("bot", t.intro));
+      thread.appendChild(chipBlock());
+    } else if(m.fallback){
+      thread.appendChild(bubble("bot", t.fallback));
+    } else {
+      const faq=FAQS.find(f=>f.id===m.faqId);
+      thread.appendChild(bubble("bot", faq.a[lang]));
+    }
+  }
+  thread.scrollTop=thread.scrollHeight;
+}
+ 
+function bubble(role, html){
+  const d=document.createElement("div");
+  d.className="msg "+role;
+  d.innerHTML=html;
+  return d;
+}
+ 
+function chipBlock(){
+  const t=UI[lang];
+  const box=document.createElement("div");
+  const lab=document.createElement("div");
+  lab.className="chips-label"; lab.textContent=t.chipsLabel;
+  const chips=document.createElement("div");
+  chips.className="chips";
+  FAQS.forEach(faq=>{
+    const b=document.createElement("button");
+    b.className="chip";
+    b.textContent=faq.q[lang];
+    b.onclick=()=>ask(faq.q[lang], faq.id);
+    chips.appendChild(b);
+  });
+  box.appendChild(lab); box.appendChild(chips);
+  return box;
+}
+ 
+function ask(userText, faqId){
+  messages.push({role:"user", text:userText});
+  messages.push({role:"bot", faqId});
+  render();
+}
+ 
+function handleSend(){
+  const input=document.getElementById("input");
+  const text=input.value.trim();
+  if(!text) return;
+  input.value="";
+  const faq=findAnswer(text);
+  messages.push({role:"user", text});
+  messages.push(faq ? {role:"bot", faqId:faq.id} : {role:"bot", fallback:true});
+  render();
+  input.focus();
+}
+ 
+function setLang(l){
+  lang=l;
+  document.getElementById("btn-en").setAttribute("aria-pressed", l==="en");
+  document.getElementById("btn-es").setAttribute("aria-pressed", l==="es");
+  render();
+}
+ 
+document.getElementById("input").addEventListener("keydown", e=>{
+  if(e.key==="Enter") handleSend();
+});
+ 
+render();
+</script>
+</body>
+</html>
