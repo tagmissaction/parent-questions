@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gold 3D</title>
+<style>html,body{margin:0;height:100%;overflow:hidden}canvas{display:block}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+<script>
+var p=new URLSearchParams(location.search);
+var light=p.get('bg')==='w';
+var BG=light?0xFAFAFF:0x000000;
+var GOLD=0xC99700, GOLD2=light?0xB08D2E:0xFFD966;
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,100);
+camera.position.z=6;
+var renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setClearColor(BG);
+document.body.appendChild(renderer.domElement);
+var ico=new THREE.Mesh(new THREE.IcosahedronGeometry(2,1),new THREE.MeshBasicMaterial({color:GOLD,wireframe:true,transparent:true,opacity:light?0.5:0.8}));
+scene.add(ico);
+var inner=new THREE.Mesh(new THREE.IcosahedronGeometry(1.1,0),new THREE.MeshBasicMaterial({color:GOLD2,wireframe:true,transparent:true,opacity:light?0.3:0.35}));
+scene.add(inner);
+var N=380,pos=new Float32Array(N*3);
+for(var i=0;i<N*3;i++)pos[i]=(Math.random()-0.5)*14;
+var pg=new THREE.BufferGeometry();
+pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+var pts=new THREE.Points(pg,new THREE.PointsMaterial({color:GOLD,size:0.05,transparent:true,opacity:light?0.55:0.8}));
+scene.add(pts);
+var mx=0,my=0;
+addEventListener('mousemove',function(e){mx=e.clientX/innerWidth-0.5;my=e.clientY/innerHeight-0.5});
+addEventListener('resize',function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+(function anim(){requestAnimationFrame(anim);
+ico.rotation.y+=0.003;ico.rotation.x+=0.001;
+inner.rotation.y-=0.005;
+pts.rotation.y+=0.0006;
+camera.position.x+=(mx*2-camera.position.x)*0.05;
+camera.position.y+=(-my*2-camera.position.y)*0.05;
+camera.lookAt(0,0,0);
+renderer.render(scene,camera)})();
+</script>
+</body>
+</html>
